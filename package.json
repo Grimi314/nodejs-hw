@@ -1,0 +1,31 @@
+{
+  "name": "nodejs-hw",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Grimi314/nodejs-hw.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Grimi314/nodejs-hw/issues"
+  },
+  "homepage": "https://github.com/Grimi314/nodejs-hw#readme",
+  "devDependencies": {
+    "eslint": "^10.2.1",
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "cros": "^1.1.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pino-http": "^11.0.0",
+    "pino-pretty": "^13.1.3"
+  }
+}
