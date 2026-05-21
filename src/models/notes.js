@@ -7,7 +7,7 @@ const noteSchema = new Schema({
     trim: true,
   },
   content: {
-    type: string,
+    type: String,
     trim: true,
     default: '',
   },
@@ -24,6 +24,7 @@ const noteSchema = new Schema({
       'Important',
       'Todo',
     ],
+    type: String,
     default: 'Todo',
   },
 
