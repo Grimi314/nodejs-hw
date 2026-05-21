@@ -18,10 +18,6 @@ app.use(logger);
 
 app.use(routes);
 
-app.use('/test-error', () => {
-  throw new Error('Simulated server error');
-});
-
 app.use(notFoundHandler);
 
 app.use(errorHandler);

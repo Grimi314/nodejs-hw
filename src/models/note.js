@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+const { model } = mongoose;
 
 const noteSchema = new mongoose.Schema(
   {
