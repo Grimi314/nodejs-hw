@@ -12,7 +12,7 @@ const routes = Routes();
 routes.get('/notes', getAllNotes);
 
 routes.get('/notes/:noteId', getNoteById);
-routers.post('/note', createNote);
+routes.post('/note', createNote);
 routes.delete('/notes/:noteId', deleteNote);
 routes.patch('/notes/:noteId', updateNote);
 
