@@ -1,4 +1,4 @@
-import { noteSchema } from '../models/notes';
+import { noteSchema } from '../models/notes.js';
 import createHttpError from 'http-errors';
 export const getAllNotes = async (req, res) => {
   const notes = await noteSchema.find();

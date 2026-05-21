@@ -2,11 +2,11 @@ import express from 'express';
 import 'dotenv/config';
 
 import cors from 'cors';
-import { connectMongoDB } from './db/connectMongoDB';
-import { errorHandler } from './middleware/errorHandler';
-import { notFoundHandler } from './middleware/notFoundHandler';
-import { logger } from './middleware/logger';
-import routes from './routes/notesRoutes';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { logger } from './middleware/logger.js';
+import routes from './routes/notesRoutes.js';
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
