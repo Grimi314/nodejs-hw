@@ -1,36 +1,38 @@
 import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 export const getAllNotes = async (req, res) => {
-  const { search, title, tag, page = 1, perPage = 10 } = req.params;
+  const { search, tag, page = 1, perPage = 10 } = req.query;
 
-  const skip = (page - 1) * perPage;
-  const notes = await Note.find();
-  if (search || title) {
-    notes.where({
-      $or: [
-        { title: { $regex: search, $options: 'i' } },
-        { content: { $regex: search, $options: 'i' } },
-      ],
-    });
+  const skip = (Number(page) - 1) * Number(perPage);
+
+  const filter = {};
+
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: 'i' } },
+      { content: { $regex: search, $options: 'i' } },
+    ];
   }
 
   if (tag) {
-    notes.where('tag').equals(tag);
+    filter.tag = tag;
   }
 
-  const [totalItems, totalNotes] = await Promise.all([
-    notes.clone().countDocument(),
-    notes.skip(skip).limit(perPage),
+  const notesQuery = Note.find(filter);
+
+  const [totalNotes, notes] = await Promise.all([
+    Note.countDocuments(filter),
+    notesQuery.skip(skip).limit(Number(perPage)),
   ]);
 
-  const totalPages = Math.ceil(totalItems / perPage);
+  const totalPages = Math.ceil(totalNotes / perPage);
 
   res.status(200).json({
-    page,
-    perPage,
-    totalItems,
-    totalPages,
+    page: Number(page),
+    perPage: Number(perPage),
     totalNotes,
+    totalPages,
+    notes,
   });
 };
 
