@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 const { model } = mongoose;
-import { TAGS } from '../constants/tags.js';
+import { TAGS } from '../constants/tags';
 
 const noteSchema = new mongoose.Schema(
   {
@@ -18,12 +18,13 @@ const noteSchema = new mongoose.Schema(
       type: String,
       enum: [...TAGS],
       default: 'Todo',
-      index: true,
     },
   },
   {
     timestamps: true,
   },
 );
+
+noteSchema.index({ tag: 1 });
 
 export const Note = model('Note', noteSchema);
