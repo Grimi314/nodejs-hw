@@ -1,5 +1,6 @@
 import express from 'express';
 import 'dotenv/config';
+import { errors } from 'celebrate';
 
 import cors from 'cors';
 import { connectMongoDB } from './db/connectMongoDB.js';
@@ -19,6 +20,7 @@ app.use(logger);
 app.use(routes);
 
 app.use(notFoundHandler);
+app.use(errors);
 
 app.use(errorHandler);
 
