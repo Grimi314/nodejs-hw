@@ -1,5 +1,6 @@
 import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
+import bcrypt from 'bcrypt';
 export const getAllNotes = async (req, res) => {
   const { search, tag, page = 1, perPage = 10 } = req.query;
 
@@ -71,3 +72,22 @@ export const updateNote = async (req, res) => {
   }
   res.status(200).json(note);
 };
+
+// export const registerUser = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   const existingUser = await Note.findOne({ email });
+
+//   if (existingUser) {
+//     throw createHttpError(400, 'Email in use');
+//   }
+
+//   const hashedPassword = await bcrypt.hash(password, 10);
+
+//   const newUser = await Note.create({
+//     email,
+//     password: hashedPassword,
+//   });
+
+//   res.status(201).json(newUser);
+// };

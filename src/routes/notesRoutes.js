@@ -28,4 +28,6 @@ routes.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
 
 routes.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
 
+// routes.post('/auth/register', celebrate(registerUserSchema));
+
 export default routes;
