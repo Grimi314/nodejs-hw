@@ -2,30 +2,35 @@ import { Note } from '../models/note.js';
 import createHttpError from 'http-errors';
 
 export const getAllNotes = async (req, res) => {
-  const { page = 1, limit = 10, tag, search } = req.query;
+  const { page = 1, perPage = 10, tag, search } = req.query;
 
-  const filter = {
-    userId: req.user._id,
-  };
+  const skip = (page - 1) * perPage;
 
-  if (tag) filter.tag = tag;
+  let query = Note.find().where('userId').equals(req.user._id);
 
-  if (search) {
-    filter.title = { $regex: search, $options: 'i' };
+  if (tag) {
+    query = query.where('tag').equals(tag);
   }
 
-  const skip = (page - 1) * limit;
+  if (search) {
+    query = query.where({
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+      ],
+    });
+  }
 
   const [notes, total] = await Promise.all([
-    Note.find(filter).skip(skip).limit(limit),
-    Note.countDocuments(filter),
+    query.skip(skip).limit(Number(perPage)),
+    Note.countDocuments({ userId: req.user._id }),
   ]);
 
   res.json({
     data: notes,
     total,
     page: Number(page),
-    limit: Number(limit),
+    perPage: Number(perPage),
   });
 };
 
@@ -69,7 +74,7 @@ export const deleteNote = async (req, res) => {
     throw createHttpError(404, 'Note not found');
   }
 
-  res.sendStatus(204);
+  res.status(200).json(note);
 };
 
 export const updateNote = async (req, res) => {
@@ -81,7 +86,9 @@ export const updateNote = async (req, res) => {
       userId: req.user._id,
     },
     req.body,
-    { new: true },
+    {
+      returnDocument: 'after',
+    },
   );
 
   if (!note) {

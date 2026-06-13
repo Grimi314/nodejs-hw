@@ -43,3 +43,5 @@ routes.patch(
   celebrate(updateNoteSchema),
   updateNote,
 );
+
+export default routes;
