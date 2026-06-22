@@ -23,13 +23,13 @@ authRoutes.post('/auth/login', celebrate(loginUserSchema), loginUser);
 authRoutes.post('/auth/refresh', refreshUserSession);
 authRoutes.post('/auth/logout', logoutUser);
 authRoutes.post(
-  '/request-reset-email',
+  '/auth/request-reset-email',
   celebrate(requestResetEmailSchema),
   requestResetEmail,
 );
 
 authRoutes.post(
-  '/reset-password',
+  '/auth/reset-password',
   celebrate(resetPasswordSchema),
   resetPassword,
 );
