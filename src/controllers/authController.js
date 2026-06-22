@@ -9,7 +9,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import jwt from 'jsonwebtoken';
 
-import { template } from 'handlebars';
+import Handlebars from 'handlebars';
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -124,7 +124,9 @@ export const logoutUser = async (req, res) => {
 
 export const requestResetEmail = async (req, res) => {
   const { email } = req.body;
+
   const user = await User.findOne({ email });
+
   if (!user) {
     return res.status(200).json({
       message: 'Password reset email sent successfully',
@@ -137,9 +139,7 @@ export const requestResetEmail = async (req, res) => {
       email: user.email,
     },
     process.env.JWT_SECRET,
-    {
-      expiresIn: '15m',
-    },
+    { expiresIn: '15m' },
   );
 
   const templatePath = path.join(
@@ -151,35 +151,20 @@ export const requestResetEmail = async (req, res) => {
 
   const source = await fs.readFile(templatePath, 'utf-8');
 
+  const template = Handlebars.compile(source);
+
   const html = template({
-    name: user.name,
+    name: user.username,
     link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${token}`,
   });
 
-  try {
-    await sendEmail({
-      to: email,
-      subject: 'Reset your password',
-      html,
-    });
-  } catch {
-    throw createHttpError(
-      500,
-      'Failed to send the email, please try again later.',
-    );
-  }
-
-  res.status(200).json({
-    message: 'Password reset email sent successfully',
+  await sendEmail({
+    to: email,
+    subject: 'Reset your password',
+    html,
   });
-};
 
-export const resetPassword = async (req, res) => {
-  const { email, password } = req.body;
-
-  await resetPasswordService(email, password);
-
-  res.status(200).json({
-    message: 'Password reset successfully',
+  return res.status(200).json({
+    message: 'Password reset email sent successfully',
   });
 };
