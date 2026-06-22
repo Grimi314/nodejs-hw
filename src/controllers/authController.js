@@ -3,6 +3,13 @@ import createHttpError from 'http-errors';
 import { createSession, setSessionCookies } from '../services/auth.js';
 import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
+import { resetPasswordService } from '../services/auth.js';
+
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import jwt from 'jsonwebtoken';
+
+import { template } from 'handlebars';
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
@@ -113,4 +120,66 @@ export const logoutUser = async (req, res) => {
   });
 
   res.sendStatus(204);
+};
+
+export const requestResetEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(200).json({
+      message: 'Password reset email sent successfully',
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      sub: user._id,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '15m',
+    },
+  );
+
+  const templatePath = path.join(
+    process.cwd(),
+    'src',
+    'templates',
+    'reset-password-email.html',
+  );
+
+  const source = await fs.readFile(templatePath, 'utf-8');
+
+  const html = template({
+    name: user.name,
+    link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${token}`,
+  });
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: 'Reset your password',
+      html,
+    });
+  } catch {
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+
+  res.status(200).json({
+    message: 'Password reset email sent successfully',
+  });
+};
+
+export const resetPassword = async (req, res) => {
+  const { email, password } = req.body;
+
+  await resetPasswordService(email, password);
+
+  res.status(200).json({
+    message: 'Password reset successfully',
+  });
 };
