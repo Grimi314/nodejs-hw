@@ -30,9 +30,8 @@ authRoutes.post(
 
 authRoutes.post(
   '/reset-password',
-  celebrate(  resetPasswordSchema),
-   resetPassword,
-,
+  celebrate(resetPasswordSchema),
+  resetPassword,
 );
 
 export default authRoutes;
